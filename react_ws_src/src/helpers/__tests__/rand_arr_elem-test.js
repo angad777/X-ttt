@@ -10,15 +10,15 @@ describe('rand_arr_elem', () => {
   }
 
   it('should return a random element from a multi element array', () => {
-    const arr = ['x', 'y', 'z']
+    const arr = ['apple', 'banana', 'cherry']
 
     mockRandToFro(1)
-    expect(rand_arr_elem(arr)).toBe('x')
+    expect(rand_arr_elem(arr)).toBe('banana')
 
     mockRandToFro(2)
-    expect(rand_arr_elem(arr)).toBe('y')
+    expect(rand_arr_elem(arr)).toBe('cherry')
 
     mockRandToFro(0)
-    expect(rand_arr_elem(arr)).toBe('z')
+    expect(rand_arr_elem(arr)).toBe('apple')
   })
 })
