@@ -43,7 +43,7 @@ export default class SetGameType extends Component {
 		// const { onSetType } = this.props
 		// onSetType(name.value.trim())
 
-		this.props.onSetType('comp')
+		this.props.onSetType('computer')
 	}
 
 }
