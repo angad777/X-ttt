@@ -7,6 +7,8 @@ import TweenMax from 'gsap'
 import rand_arr_elem from '../../helpers/rand_arr_elem'
 import rand_to_fro from '../../helpers/rand_to_fro'
 
+import confetti from 'canvas-confetti';
+
 export default class SetName extends Component {
 
 	constructor (props) {
@@ -48,9 +50,46 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 
 	componentDidMount () {
+
     	TweenMax.from('#game_stat', 1, {display: 'none', opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeIn})
     	TweenMax.from('#game_board', 1, {display: 'none', opacity: 0, x:-200, y:-200, scaleX:0, scaleY:0, ease: Power4.easeIn})
 	}
+
+	  /**
+	   * 
+	   * This will add celebration confetti when a human player wins the match
+	   * 
+	   */
+		celebrateWin() {
+
+		const duration = 2 * 1000; 
+		const end = Date.now() + duration;
+	
+		const confettiColors = ['#bb0000', '#ffffff', '#00ff00', '#0000ff'];
+	
+		(function frame() {
+		  confetti({
+			particleCount: 4, 
+			angle: 60,        
+			spread: 55,       
+			origin: { x: 0 }, 
+			colors: confettiColors,
+		  });
+		  confetti({
+			particleCount: 4,
+			angle: 120,
+			spread: 55,
+			origin: { x: 1 }, 
+			colors: confettiColors,
+		  });
+	
+		  if (Date.now() < end) {
+			requestAnimationFrame(frame);
+		  }
+		})();
+	  }
+
+
 
 //	------------------------	------------------------	------------------------
 //	------------------------	------------------------	------------------------
@@ -300,6 +339,11 @@ export default class SetName extends Component {
 			this.refs[set[0]].classList.add('win')
 			this.refs[set[1]].classList.add('win')
 			this.refs[set[2]].classList.add('win')
+
+			// celebrate when a human player wins the match
+			if (cell_vals[set[0]] === 'x') {
+				this.celebrateWin(); 
+			}
 
 			TweenMax.killAll(true)
 			TweenMax.from('td.win', 1, {opacity: 0, ease: Linear.easeIn})
