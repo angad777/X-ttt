@@ -7,6 +7,8 @@ import TweenMax from 'gsap'
 import rand_arr_elem from '../../helpers/rand_arr_elem'
 import rand_to_fro from '../../helpers/rand_to_fro'
 
+import confetti from 'canvas-confetti';
+
 export default class SetName extends Component {
 
 	constructor (props) {
@@ -48,9 +50,46 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 
 	componentDidMount () {
+
     	TweenMax.from('#game_stat', 1, {display: 'none', opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeIn})
     	TweenMax.from('#game_board', 1, {display: 'none', opacity: 0, x:-200, y:-200, scaleX:0, scaleY:0, ease: Power4.easeIn})
 	}
+
+	  /**
+	   * 
+	   * This will add celebration confetti when a human player wins the match
+	   * 
+	   */
+		celebrateWin() {
+
+		const duration = 2 * 1000; 
+		const end = Date.now() + duration;
+	
+		const confettiColors = ['#bb0000', '#ffffff', '#00ff00', '#0000ff'];
+	
+		(function frame() {
+		  confetti({
+			particleCount: 4, 
+			angle: 60,        
+			spread: 55,       
+			origin: { x: 0 }, 
+			colors: confettiColors,
+		  });
+		  confetti({
+			particleCount: 4,
+			angle: 120,
+			spread: 55,
+			origin: { x: 1 }, 
+			colors: confettiColors,
+		  });
+	
+		  if (Date.now() < end) {
+			requestAnimationFrame(frame);
+		  }
+		})();
+	  }
+
+
 
 //	------------------------	------------------------	------------------------
 //	------------------------	------------------------	------------------------
@@ -142,7 +181,12 @@ export default class SetName extends Component {
 				</div>
 
 				<button type='submit' onClick={this.end_game.bind(this)} className='button'><span>End Game <span className='fa fa-caret-right'></span></span></button>
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;
 
+				<button type='submit' onClick={this.restart_game.bind(this)} className='button'>
+                    <span>Restart Game <span className='fa fa-refresh'></span></span>
+                </button>
 			</div>
 		)
 	}
@@ -301,6 +345,11 @@ export default class SetName extends Component {
 			this.refs[set[1]].classList.add('win')
 			this.refs[set[2]].classList.add('win')
 
+			// celebrate when a human player wins the match
+			if (cell_vals[set[0]] === 'x') {
+				this.celebrateWin(); 
+			}
+
 			TweenMax.killAll(true)
 			TweenMax.from('td.win', 1, {opacity: 0, ease: Linear.easeIn})
 
@@ -329,6 +378,33 @@ export default class SetName extends Component {
 		}
 		
 	}
+
+//	------------------------	------------------------	------------------------
+
+	restart_game() {
+		const restartGamePlayerConsent = window.confirm('Are you sure you want to restart the game?');
+
+		if (restartGamePlayerConsent) {
+			this.setState({
+				cell_vals: {},
+				next_turn_ply: true,
+				game_play: true,
+				game_stat: 'Start game'
+			});
+
+			for (let i = 1; i <= 9; i++) {
+				this.refs['c' + i].classList.remove('win');
+			}
+
+			if (this.props.game_type === 'live') {
+				this.setState({
+					game_stat: 'Connecting'
+				});
+				this.sock_start();
+			}
+		}
+	}
+
 
 //	------------------------	------------------------	------------------------
 
