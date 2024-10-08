@@ -181,7 +181,12 @@ export default class SetName extends Component {
 				</div>
 
 				<button type='submit' onClick={this.end_game.bind(this)} className='button'><span>End Game <span className='fa fa-caret-right'></span></span></button>
+				
+				&nbsp;&nbsp;&nbsp;&nbsp;
 
+				<button type='submit' onClick={this.restart_game.bind(this)} className='button'>
+                    <span>Restart Game <span className='fa fa-refresh'></span></span>
+                </button>
 			</div>
 		)
 	}
@@ -373,6 +378,33 @@ export default class SetName extends Component {
 		}
 		
 	}
+
+//	------------------------	------------------------	------------------------
+
+	restart_game() {
+		const restartGamePlayerConsent = window.confirm('Are you sure you want to restart the game?');
+
+		if (restartGamePlayerConsent) {
+			this.setState({
+				cell_vals: {},
+				next_turn_ply: true,
+				game_play: true,
+				game_stat: 'Start game'
+			});
+
+			for (let i = 1; i <= 9; i++) {
+				this.refs['c' + i].classList.remove('win');
+			}
+
+			if (this.props.game_type === 'live') {
+				this.setState({
+					game_stat: 'Connecting'
+				});
+				this.sock_start();
+			}
+		}
+	}
+
 
 //	------------------------	------------------------	------------------------
 
